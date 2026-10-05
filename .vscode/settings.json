@@ -1,0 +1,11 @@
+{
+  "w3mf.enabled": true,
+  "files.encoding": "utf8",
+  "files.eol": "\n",
+  "Lua.runtime.version": "Lua 5.3",
+  "Lua.workspace.library": ["${workspaceFolder}/meta"],
+  "Lua.workspace.checkThirdParty": false,
+  "files.watcherExclude": { "**/.tools/**": true, "**/build/**": true },
+  "search.exclude": { "**/.tools": true, "**/build": true, "**/dist": true },
+  "files.exclude": { ".tools": true, ".npm-cache": true }
+}

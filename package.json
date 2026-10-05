@@ -1,0 +1,14 @@
+{
+  "name": "w3-mf",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Warcraft III 1.27 Lua development workspace",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/run.mjs",
+    "editor": "node scripts/editor.mjs",
+    "check": "node scripts/build.mjs --check",
+    "setup:f6": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/install-f6.ps1",
+    "clean": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/clean.ps1"
+  }
+}

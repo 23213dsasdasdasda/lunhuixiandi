@@ -1,0 +1,8 @@
+.tools/
+.npm-cache/
+build/
+dist/
+logs/
+node_modules/
+*.bak
+*.vsix

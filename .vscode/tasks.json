@@ -1,0 +1,8 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "War3: F6 Test", "type": "process", "command": "node", "args": ["scripts/run.mjs"], "options": { "cwd": "${workspaceFolder}", "statusbar": { "label": "$(play) F6 测试地图" } }, "problemMatcher": [], "runOptions": { "instanceLimit": 1 }, "presentation": { "reveal": "always", "panel": "dedicated", "clear": true } },
+    { "label": "War3: Build", "type": "process", "command": "node", "args": ["scripts/build.mjs"], "options": { "cwd": "${workspaceFolder}" }, "group": { "kind": "build", "isDefault": true }, "problemMatcher": [] },
+    { "label": "War3: World Editor", "type": "process", "command": "node", "args": ["scripts/editor.mjs"], "options": { "cwd": "${workspaceFolder}" }, "problemMatcher": [] }
+  ]
+}

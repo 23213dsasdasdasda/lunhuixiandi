@@ -1,0 +1,16 @@
+{
+  "name": "w3-mf-f6",
+  "displayName": "W3 MF F6 Map Test",
+  "description": "Save all and run this Warcraft project's map test task.",
+  "version": "0.1.0",
+  "publisher": "local-w3mf",
+  "engines": { "vscode": "^1.75.0" },
+  "main": "extension.js",
+  "activationEvents": ["onCommand:w3mf.test"],
+  "capabilities": { "untrustedWorkspaces": { "supported": false } },
+  "contributes": {
+    "commands": [{ "command": "w3mf.test", "title": "War3: Save and Test Map (F6)" }],
+    "keybindings": [{ "command": "w3mf.test", "key": "f6", "when": "config.w3mf.enabled" }],
+    "configuration": { "title": "W3 MF", "properties": { "w3mf.enabled": { "type": "boolean", "default": false, "scope": "resource", "description": "Enable F6 map testing in this workspace." } } }
+  }
+}
