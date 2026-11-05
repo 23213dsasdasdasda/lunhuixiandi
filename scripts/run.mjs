@@ -36,6 +36,7 @@ try {
   fs.copyFileSync(absolute(config.output), deployedMap);
   const logFile = absolute('logs/runtime.log');
   fs.writeFileSync(logFile, `Waiting for Warcraft Lua startup: ${buildId}\n`);
+  console.log(`Runtime log: ${logFile}`);
   const code = await new Promise((resolve, reject) => {
     const child = spawn(launcher, ['-launchwar3', '-loadfile', deployedMap], {
       cwd: gameRoot, stdio: 'inherit', windowsHide: true,
@@ -55,11 +56,22 @@ try {
   fs.writeFileSync(absolute('logs/last-test.json'), JSON.stringify({ buildId, launcherCode: code, game, map: deployedMap }, null, 2));
   const deadline = Date.now() + 60_000;
   let ready = false;
+  let logOffset = 0;
+  let pendingLog = '';
   while (Date.now() < deadline) {
     const log = fs.readFileSync(logFile, 'utf8');
+    if (log.length < logOffset) logOffset = 0;
+    if (log.length > logOffset) {
+      pendingLog += log.slice(logOffset);
+      logOffset = log.length;
+      const lines = pendingLog.split(/\r?\n/);
+      pendingLog = lines.pop();
+      for (const line of lines) if (line) console.log(`[War3 Lua] ${line}`);
+    }
     if (log.includes('LUA_ERROR')) throw new Error(`Lua initialization failed:\n${log}`);
-    if (log.includes(`W3_MF_BOOT ${buildId}`) && log.includes('W3_MF_READY hero=')) {
-      console.log(`TEST READY: ${buildId}\n${log.trim()}`);
+    if (log.includes(`W3_MF_BOOT ${buildId}`) && log.includes('W3_MF_GAME_READY')) {
+      if (pendingLog) console.log(`[War3 Lua] ${pendingLog}`);
+      console.log(`TEST READY: ${buildId}`);
       ready = true;
       break;
     }

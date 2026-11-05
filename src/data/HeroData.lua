@@ -1,3 +1,3 @@
 return {
-    paladin = { id = 'Hpal', x = 0, y = 0, facing = 270 },
+    paladin = { id = 'Hpal', x = -6400, y = 192, facing = 270 },
 }

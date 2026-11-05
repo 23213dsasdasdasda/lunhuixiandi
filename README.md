@@ -2,7 +2,7 @@
 
 使用 VS Code 开发 Warcraft III Lua 地图的基础工程。
 
-当前工程路径：`C:\Users\ROG\Documents\w3_mf`。
+当前工程路径：`G:\轮回仙帝lua项目`。
 
 当前采用 **VS Code + 直接编写 Lua + KKWE Lua 运行时 + w3x2lni 打包**，针对本机 Warcraft III 1.27。没有接入 TypeScriptToLua；源码入口是 `src/main.lua`，不是 `src/main.ts`。
 
@@ -10,25 +10,27 @@
 
 ## 1. 完成情况与缺项
 
-2026-10-05 更新：**构建、KKWE 启动、Lua 初始化和创建英雄已通过命令行实测；F6 扩展已安装。首次打开项目需要信任工作区，才能运行测试任务。**
+2026-11-05 更新：当前先按 MoeHero 的 Lua 启动结构做最小可运行版：初始化时关闭战争迷雾并创建初始任务，使用原图 `YJ03` 杨戬物编和 `h008.mdx` 导入模型；显示 1–9 难度面板后按计时器刷怪，击败第一只试炼怪会完成任务。`src/war3map/` 中的整图转换代码只保留作参考，不参与当前构建。
 
 | 项目 | 当前状态 |
 | --- | --- |
 | Node.js、Lua、VS Code | 本机已有，可从命令行调用 |
 | Lua Language Server、Tasks 扩展 | 本机已安装 |
-| Lua 源码与基础模块 | 已有 Hero、Item、Timer、Event、Rawcode、FireBall 示例 |
-| Lua 语法检查 | `npm.cmd run check` 通过，检查了 8 个源码文件 |
-| 单文件脚本与地图打包 | `npm.cmd run build` 通过 |
-| 地图内部脚本 | 已解包验证：启动调用存在，内嵌 Lua 与 `build/main.lua` 的 SHA-256 一致 |
+| Lua 源码与基础模块 | 当前使用 `game/`、Player、Unit、Quest、Timer、Trigger、War3UI、Rawcode；旧示例模块未接入 MVP |
+| Lua 语法检查 | 使用 `npm.cmd run check` 检查当前构建使用的 Lua 模块 |
+| 单文件脚本与地图打包 | 通过 F6 构建；每次源码调整后仍需在游戏内确认 |
+| 物编数据 | `map/table/` 保留工程现有原图数据；已与 `342.w3x` 解包结果核对 |
+| 地图内部脚本 | 启动入口为 `lua/base.lua`，Lua 游戏入口为 `src/main.lua` |
 | VS Code 任务 | 已配置测试、构建、打开编辑器三个任务 |
 | F6 快捷键 | `local-w3mf.w3-mf-f6` 已安装；只在本项目启用，需信任工作区 |
-| 游戏内执行 | 命令行实测出现本次构建的 `W3_MF_BOOT` 和 `W3_MF_READY hero=handle: 0x10005D` |
+| 当前玩法 | 选择难度后，计时器周期生成敌方单位；原图其余玩法暂不接入 |
+| 游戏内执行 | 需以看到杨戬、初始任务和难度面板，并观察刷怪为准 |
 | 启动器返回值 | 已修正：识别返回的 War3 PID，等待本次构建的 Lua 就绪标记，超时或 Lua 错误会报失败 |
 | War3 API 智能补全 | 待补充；`meta/` 为空，仅有通用 Lua 语言服务 |
 | Git | 使用 `.gitignore` 排除生成文件、日志和本机工具，源码与地图纳入版本管理 |
 | 自动监听、热更新、Lua 断点调试 | 未实现；目前每次测试需要重新构建、启动地图 |
 
-已完成语法检查、地图解包验证、无 Lua/最小 Lua 对照和完整工程的运行日志验收。初版在加载阶段卡住，替换自写文件日志为引擎原生 `jass.log` 后完整工程通过。**打包成功与进程创建仍不等于 Lua 执行成功，以 `TEST READY` 和本次日志为准。**
+JASS `main` 只负责进入 `exec-lua:lua.base`；玩法写在 Lua 模块中。Lua 通过 `jass.common` 调用 Warcraft 提供的底层接口，不需要把玩法写成 JASS。
 
 另外，本机语法检查器是 Lua 5.4.6，工程语言服务按 Lua 5.3 配置；语法检查不覆盖目标运行时的全部兼容性，开发时避免使用 Lua 5.4 专属语法。
 
@@ -37,7 +39,7 @@
 在 PowerShell 执行：
 
 ```powershell
-cd C:\Users\ROG\Documents\w3_mf
+cd G:\轮回仙帝lua项目
 code .
 ```
 
@@ -57,7 +59,7 @@ code .
 ### 只检查语法
 
 ```powershell
-cd C:\Users\ROG\Documents\w3_mf
+cd G:\轮回仙帝lua项目
 npm.cmd run check
 ```
 
@@ -66,7 +68,7 @@ npm.cmd run check
 ### 构建地图
 
 ```powershell
-cd C:\Users\ROG\Documents\w3_mf
+cd G:\轮回仙帝lua项目
 npm.cmd run build
 ```
 
@@ -85,15 +87,15 @@ dist/W3_MF_Test.w3x     测试地图
 先退出之前的魔兽测试实例，再执行：
 
 ```powershell
-cd C:\Users\ROG\Documents\w3_mf
+cd G:\轮回仙帝lua项目
 npm.cmd test
 ```
 
 或者按 `Ctrl+Shift+P` → **Tasks: Run Task / 任务: 运行任务** → **War3: F6 Test**。装有 Tasks 扩展时，也可点击状态栏的“F6 测试地图”按钮；按钮名称本身不表示 F6 已绑定。
 
-该命令先构建，再把测试地图复制到游戏目录下的 `Maps/W3MF/W3_MF_Test.w3x`，然后通过 KKWE 启动。它会核对注册表游戏目录与 `config.json` 一致，并最多等待 60 秒确认本次 Lua 初始化完成。游戏目录需要有写入权限。
+该命令先构建，再把测试地图复制到游戏目录下的 `Maps/W3MF/W3_MF_Test.w3x`，然后通过 KKWE 启动。它会核对注册表游戏目录与 `config.json` 一致，并最多等待 60 秒确认本次 Lua 初始化完成。入口沿用 MoeHero 的 `exec-lua:lua.base` 形式，并启用游戏 Lua 控制台。等待期间，Lua 日志也会实时显示在 VS Code 的 F6 任务终端，前缀为 `[War3 Lua]`；游戏目录需要有写入权限。
 
-成功表现：玩家 0 获得并选中圣骑士，获得一个物品，地图显示 `W3 MF Lua ready!`，终端输出 `TEST READY`，日志出现 `W3_MF_READY hero=...`。已确认完整初始化的运行日志；画面与 F6 验收结果见第 10 节。
+成功表现：游戏内出现杨戬、初始任务提示和难度选择面板；选择难度 1–9 后开始刷怪，击败第一只怪后任务完成。日志应出现 `W3_MF_INITIAL_QUEST_READY`、`W3_MF_HERO_READY`、`W3_MF_DIFFICULTY_FRAME_READY`、`W3_MF_WAVES_STARTED` 和 `W3_MF_WAVE`。
 
 ## 4. 如何绑定 F6
 
@@ -102,7 +104,7 @@ npm.cmd test
 换电脑或重新安装扩展时：
 
 ```powershell
-cd C:\Users\ROG\Documents\w3_mf
+cd G:\轮回仙帝lua项目
 npm.cmd run setup:f6
 ```
 
@@ -145,15 +147,24 @@ npm.cmd run setup:f6
 
 ```text
 src/
-  main.lua              地图逻辑入口
+  main.lua              玩法入口
+  game/
+    init.lua            关闭战争迷雾、创建初始任务
+    main.lua            设置镜头、创建杨戬、打开难度选择
+    difficulty.lua      DzFrame 自定义难度面板与 Lua 同步回调
+    waves.lua           难度对应的周期刷怪和击杀任务进度
   core/
+    War3API.lua         jass.common 接口适配
+    Player.lua          Player:create_unit Lua 方法
+    Unit.lua            单位位置、攻击、选择方法
+    Quest.lua           任务与目标封装
+    War3UI.lua          DzFrame 接口适配；缺少扩展 API 时回退到对话框
+    Trigger.lua         Lua 回调触发器封装
+    Dialog.lua          DzFrame 不可用时的难度对话框回退
     Timer.lua           一次性/周期计时器
-    Event.lua           Lua 内部事件订阅与派发
-    Rawcode.lua         将四字符对象 ID 转成数值
-  data/HeroData.lua     英雄 ID、位置、朝向配置
-  hero/Hero.lua         创建、选择英雄
-  item/Item.lua         给单位添加物品
-  ability/FireBall.lua  伤害和特效函数示例
+    Rawcode.lua         四字符对象 ID 转数字
+  war3map/
+    ...                 整图转换参考代码；构建时排除
 map/                    可编辑的 LNI 地图源文件
 scripts/                构建、启动、编辑器脚本
 .vscode/                VS Code 任务和设置
@@ -161,22 +172,23 @@ meta/                   预留 API 类型声明目录，当前为空
 .tools/                 本地第三方工具，默认在资源管理器中隐藏
 ```
 
-`Event` 是 Lua 内部事件工具，不会自动监听魔兽单位受伤或施法事件。`FireBall` 目前也没有绑定技能按钮，需要之后接施法事件和物编技能。
+`Event` 和 `FireBall` 是旧示例，目前不属于这套 MVP。游戏逻辑优先通过 `Player:create_unit`、`Unit:attack`、`Timer.loop` 这些 Lua 方法编写；底层适配器再调用 `jass.common`。
 
 ### 第一次修改
 
-在 `src/main.lua` 中找到 `DisplayTimedTextToPlayer`，修改显示文字，然后保存并重新测试。也可改 `src/data/HeroData.lua` 中的坐标或英雄 ID。
+先从 `src/game/` 修改当前玩法。`src/war3map/` 是整图反编译参考，不会被当前打包器加载；新功能按需写成小的 Lua 模块接入。
 
 ### 新增模块
 
 例如创建 `src/gameplay/Welcome.lua`：
 
 ```lua
-local jass = require 'jass.common'
+local War3API = require 'core.War3API'
+local war3 = War3API.common
 local Welcome = {}
 
 function Welcome.show(player)
-    jass.DisplayTimedTextToPlayer(player, 0, 0, 10, 'Hello from VS Code!')
+    war3.DisplayTimedTextToPlayer(player, 0, 0, 10, 'Hello from VS Code!')
 end
 
 return Welcome
@@ -196,12 +208,12 @@ Welcome.show(player)
 
 构建器会递归收集 `src/` 下的 `.lua` 文件，注册为 `package.preload` 模块。路径 `src/gameplay/Welcome.lua` 对应模块名 `gameplay.Welcome`；新增模块不用手工维护打包列表。注意大小写一致。
 
-游戏接口通过 `local jass = require 'jass.common'` 调用，不应假设新版魔兽的所有全局 Lua API 在此环境可用。
+游戏原生接口从 `core.War3API` 获取。只有这个适配模块直接连接运行时的 `jass.common` 原生绑定；这里的 JASS 是引擎 API 名称，不是玩法代码使用 JASS 语言编写。
 
 ## 6. 地形与物编怎么改
 
 ```powershell
-cd C:\Users\ROG\Documents\w3_mf
+cd G:\轮回仙帝lua项目
 npm.cmd run editor
 ```
 
@@ -209,14 +221,14 @@ npm.cmd run editor
 
 `map/.w3x` 是 LNI 工程标记，不是完整的地图压缩包。地形、物编等源数据保存在 `map/` 下。编辑后保存，再回到 VS Code 构建。
 
-不要用 `dist/W3_MF_Test.w3x` 作为日常编辑源，否则构建时会覆盖其中的修改。无需手动添加 Lua 初始化触发器：构建时会在暂存的 `war3map.j` 中注入 `Cheat("exec-lua:w3mf_boot")`，源地图不被该步骤修改。
+不要用 `dist/W3_MF_Test.w3x` 作为日常编辑源，否则构建时会覆盖其中的修改。无需手动添加 Lua 初始化触发器：构建时会在暂存的 `war3map.j` 中注入 `Cheat("exec-lua:lua.base")`，源地图不被该步骤修改。
 
 ## 7. 日志与常见问题
 
-查看运行日志：
+F6 终端会实时显示运行日志；日志文件固定在 `G:\轮回仙帝lua项目\logs\runtime.log`。也可以在 PowerShell 里持续查看：
 
 ```powershell
-cd C:\Users\ROG\Documents\w3_mf
+cd G:\轮回仙帝lua项目
 Get-Content .\logs\runtime.log -Wait
 ```
 
@@ -229,8 +241,8 @@ Get-Content .\logs\runtime.log -Wait
 | `lua` 找不到 | 在 `config.json` 中把 `luaPath` 改成实际解释器路径 |
 | `jass.common` 找不到 | 若是普通 Lua/Code Runner 报错，应通过 KKWE 启动地图；若在游戏中报错，要检查 Lua 运行时加载 |
 | 日志只有 `Waiting for Warcraft Lua startup...` | 只能说明启动脚本已执行，不能证明地图 Lua 启动；需排查游戏加载、KKWE 注入与日志写入 |
-| 出现 `W3_MF_BOOT`，没有 `W3_MF_READY` | 已进入合并脚本，但初始化未完成；查找 `LUA_ERROR` 和堆栈 |
-| 出现 `W3_MF_READY hero=...` | 已运行到创建英雄、添加物品、选择英雄之后；仍需游戏画面确认表现 |
+| 出现 `W3_MF_BOOT`，没有 `W3_MF_GAME_READY` | 已进入 Lua，但 MVP 初始化未完成；查找 `LUA_ERROR` 和最后一条阶段标记 |
+| 出现 `W3_MF_GAME_READY` | Lua MVP 已启动；选择难度后应继续出现 `W3_MF_WAVES_STARTED` 和 `W3_MF_WAVE` |
 | 启动后报没有匹配的 Warcraft 进程 | 启动器返回值已按 PID 检查，进程不存在时会报告失败；检查游戏是否退出或启动配置是否正确 |
 | 游戏开了但代码没变化 | 先保存源码，退出旧测试实例，再重新构建测试；当前没有热更新 |
 
@@ -260,7 +272,7 @@ Get-Content .\logs\runtime.log -Wait
 日常提交改动：
 
 ```powershell
-cd C:\Users\ROG\Documents\w3_mf
+cd G:\轮回仙帝lua项目
 git status
 git add .
 git diff --cached --stat
@@ -274,8 +286,7 @@ git push
 
 1. 项目专用 F6 扩展已安装。
 2. 已修正 KKWE 返回值判断，检查注册表游戏目录，并将测试图部署到游戏的 `Maps/W3MF/`。
-3. 已在 VS Code 实际按 F6，产生构建 `2026-10-05T10:09:22.881Z`，运行日志出现对应的 `W3_MF_BOOT` 和 `W3_MF_READY`。
-4. 最小 Lua 对照地图的画面已确认；完整工程最后的英雄操作验收因电脑操作被停止而未完成。
+3. 当前 MoeHero 风格 MVP 已接入开局初始化、杨戬物编模型、初始任务、难度面板和周期刷怪；仍需按 F6 确认游戏内模型、迷雾和任务表现。
 
 API 补全、Git、热更新、TypeScriptToLua 和完整技能框架属于后续扩展，不是已完成事项。
 
@@ -295,7 +306,7 @@ logs/last-test.json            最近一次测试记录
 需要重新生成构建产物时：
 
 ```powershell
-cd C:\Users\ROG\Documents\w3_mf
+cd G:\轮回仙帝lua项目
 npm.cmd run clean
 npm.cmd run build
 ```

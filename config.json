@@ -1,7 +1,7 @@
 {
-  "gamePath": "C:/WAR3/Warcraft3-11hf/war3.exe",
+  "gamePath": "E:/War3/Warcraft3-11hf/war3.exe",
   "kkwePath": ".tools/template/dev_lib/KKWE",
-  "w2lPath": ".tools/template/dev_lib/w3x2lni/w2l.exe",
+  "w2lPath": "E:/w3x2lni_zhCN_v2.7.3/w2l.exe",
   "luaPath": "lua",
   "mapSource": "map",
   "output": "dist/W3_MF_Test.w3x"
